@@ -6,8 +6,8 @@ def data_process_function(msg):
     print(" [x] Received " + str(msg))
 
     time.sleep(5)  # delays for 5 seconds
-    print(" DATA processing finished");
-    return;
+    print(" DATA processing finished")
+    return
 
 
 # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
@@ -17,18 +17,19 @@ connection = pika.BlockingConnection(params)
 channel = connection.channel()  # start a channel
 
 
-# channel.queue_declare(queue='Yosbel') # Declare a queue
-
-
 # create a function which is called on incoming messages
 def callback(ch, method, properties, body):
     data_process_function(body)
+    ch.basic_ack(delivery_tag = method.delivery_tag)
 
+
+
+channel.queue_declare(queue='Yosbel', durable=True)
+channel.basic_qos(prefetch_count=1)
 
 # set up subscription on the queue
 channel.basic_consume('Yosbel',
-                      callback,
-                      auto_ack=True)
+                      callback)
 
 # start consuming (blocks)
 channel.start_consuming()

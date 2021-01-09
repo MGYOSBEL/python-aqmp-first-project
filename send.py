@@ -20,6 +20,12 @@ channel = connection.channel() # start a channel
 # channel.queue_declare(queue='Yosbel', durable: true,) # Declare a queue
 # send a message
 
-channel.basic_publish(exchange='', routing_key='Yosbel', body=json.dumps(data))
+channel.basic_publish(
+            exchange = '',
+            routing_key = 'Yosbel',
+            body = json.dumps(data)
+            properties = pika.BasicProperties(
+                delivery_mode = 2
+            ))
 print("[x] Message sent to consumer")
 connection.close()
